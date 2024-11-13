@@ -182,6 +182,7 @@ class BigQuerySink(BatchSink):
                 AND main._sdc_sequence < sub._sdc_sequence
             )"""
 
+        self.logger.debug(f"[{self.stream_name}][{batch_id}] {stmt}")
         return stmt
 
     def update_from_temp_table(self, batch_id: str, batch_meta: dict[str, Any]) -> str:
