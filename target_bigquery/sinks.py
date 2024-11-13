@@ -174,15 +174,7 @@ class BigQuerySink(BatchSink):
     def clean_temp_table(self, batch_id: str, batch_meta: dict[str, Any]) -> str:
         """Clean temp table before MERGE"""
 
-        stmt = f"""DELETE FROM  `{self.dataset_id}`.`{self.temp_table_name(batch_id)}` AS main
-            WHERE EXISTS (
-                SELECT 1
-                FROM  `{self.dataset_id}`.`{self.temp_table_name(batch_id)}` AS sub
-                WHERE main.id = sub.id
-                AND main._sdc_sequence < sub._sdc_sequence
-            )
-
-            CREATE OR REPLACE TABLE `{self.dataset_id}`.`to_delete_{self.temp_table_name(batch_id)}` AS
+        stmt = f"""CREATE OR REPLACE TABLE `{self.dataset_id}`.`to_delete_{self.temp_table_name(batch_id)}` AS
             WITH ranked AS (
                 SELECT id,
                        _sdc_sequence,
