@@ -191,7 +191,7 @@ class BigQuerySink(BatchSink):
                 FROM `{self.dataset_id}`.`to_delete_{self.temp_table_name(batch_id)}`
             );
 
-            DROP TABLE `{self.dataset_id}`.`to_delete_{self.temp_table_name(batch_id)}`;"""
+            DROP TABLE `{self.dataset_id}`.`to_delete_{self.temp_table_name(batch_id)}`"""
 
         self.logger.debug(f"[{self.stream_name}][{batch_id}] {stmt}")
         return stmt
