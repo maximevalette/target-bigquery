@@ -167,7 +167,7 @@ class BigQuerySink(BatchSink):
             )
 
         if expires:
-            table.expires = datetime.now() + timedelta(days=1)
+            table.expires = datetime.now() + timedelta(hours=2)
 
         self.client.create_table(table=table, exists_ok=True)
 
