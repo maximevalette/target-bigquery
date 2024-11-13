@@ -180,7 +180,26 @@ class BigQuerySink(BatchSink):
                 FROM  `{self.dataset_id}`.`{self.temp_table_name(batch_id)}` AS sub
                 WHERE main.id = sub.id
                 AND main._sdc_sequence < sub._sdc_sequence
-            )"""
+            )
+
+            CREATE OR REPLACE TABLE `{self.dataset_id}`.`to_delete_{self.temp_table_name(batch_id)}` AS
+            WITH ranked AS (
+                SELECT id,
+                       _sdc_sequence,
+                       ROW_NUMBER() OVER (PARTITION BY id ORDER BY _sdc_sequence DESC) AS row_num
+                FROM `{self.dataset_id}`.`to_delete_{self.temp_table_name(batch_id)}`
+            )
+            SELECT id, _sdc_sequence
+            FROM ranked
+            WHERE row_num > 1;
+            
+            DELETE FROM `{self.dataset_id}`.`{self.temp_table_name(batch_id)}`
+            WHERE (id) IN (
+                SELECT id
+                FROM `{self.dataset_id}`.`to_delete_{self.temp_table_name(batch_id)}`
+            );
+
+            DROP TABLE `{self.dataset_id}`.`to_delete_{self.temp_table_name(batch_id)}`;"""
 
         self.logger.debug(f"[{self.stream_name}][{batch_id}] {stmt}")
         return stmt
