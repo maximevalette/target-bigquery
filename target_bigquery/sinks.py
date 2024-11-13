@@ -179,7 +179,7 @@ class BigQuerySink(BatchSink):
                 SELECT id,
                        _sdc_sequence,
                        ROW_NUMBER() OVER (PARTITION BY id ORDER BY _sdc_sequence DESC) AS row_num
-                FROM `{self.dataset_id}`.`to_delete_{self.temp_table_name(batch_id)}`
+                FROM `{self.dataset_id}`.`{self.temp_table_name(batch_id)}`
             )
             SELECT id, _sdc_sequence
             FROM ranked
